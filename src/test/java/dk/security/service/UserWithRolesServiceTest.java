@@ -18,7 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import static org.junit.jupiter.api.Assertions.*;
 
 //You can enable/disable these tests in you maven builds via the maven-surefire-plugin, in your pom-file
-@Tag("DisabledSecurityTest")
+//@Tag("DisabledSecurityTest")
 @DataJpaTest
 class UserWithRolesServiceTest {
 
@@ -56,24 +56,24 @@ class UserWithRolesServiceTest {
   void getUserWithRoles() {
     UserWithRolesResponse user = userWithRolesService.getUserWithRoles("u1");
     assertEquals(2, user.getRoleNames().size());
-    assertTrue(user.getRoleNames().contains("USER"));
-    assertTrue(user.getRoleNames().contains("ADMIN"));
+    assertTrue(user.getRoleNames().contains("CUSTOMER"));
+    assertTrue(user.getRoleNames().contains("EMPLOYEE"));
   }
 
   @Test
   void addRole() {
-    UserWithRolesResponse user = userWithRolesService.addRole("u4", "USER");
+    UserWithRolesResponse user = userWithRolesService.addRole("u4", "CUSTOMER");
     assertEquals(1, user.getRoleNames().size());
-    assertTrue(user.getRoleNames().contains("USER"));
+    assertTrue(user.getRoleNames().contains("CUSTOMER"));
   }
 
   @Test
   void removeRole() {
-    UserWithRolesResponse user = userWithRolesService.removeRole("u1", "USER");
+    UserWithRolesResponse user = userWithRolesService.removeRole("u1", "EMPLOYEE");
     assertEquals(1, user.getRoleNames().size());
-    assertTrue(user.getRoleNames().contains("ADMIN"));
-    user = userWithRolesService.removeRole("u1", "ADMIN");
-    assertEquals(0, user.getRoleNames().size());
+    assertFalse(user.getRoleNames().contains("EMPLOYEE"));
+    user = userWithRolesService.removeRole("u1", "EMPLOYEE");
+    assertEquals(1, user.getRoleNames().size());
   }
 
   @Test
@@ -104,11 +104,11 @@ class UserWithRolesServiceTest {
   @Test
   void addUserWithRolesWithRole() {
     Mockito.when(passwordEncoder.encode("new_Password")).thenReturn("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-    userWithRolesService.setDefaultRoleName("USER");
+    userWithRolesService.setDefaultRoleName("CUSTOMER");
     UserWithRolesRequest user = new UserWithRolesRequest("u5", "new_Password", "xx@x.dk");
     UserWithRolesResponse newUser = userWithRolesService.addUserWithRoles(user);
     assertEquals(1, newUser.getRoleNames().size());
-    assertTrue(newUser.getRoleNames().contains("USER"));
+    assertTrue(newUser.getRoleNames().contains("CUSTOMER"));
     assertEquals("u5", newUser.getUserName());
     assertEquals("xx@x.dk", newUser.getEmail());
   }
