@@ -88,7 +88,7 @@ class UserWithRoleControllerTest {
 
   @Test
   void addUsersWithRolesNoRoles() throws Exception {
-    UserWithRolesRequest newUserReq = new UserWithRolesRequest("u100", "secret", "u100@a.dk");
+    UserWithRolesRequest newUserReq = new UserWithRolesRequest("u100", "secret", "u100@a.dk", "newName", "newAddress");
     userWithRolesService.setDefaultRoleName(null);
     mockMvc.perform(post("/api/user-with-role")
                     .contentType("application/json")
@@ -101,7 +101,7 @@ class UserWithRoleControllerTest {
 
   @Test
   void addUsersWithRoles() throws Exception {
-    UserWithRolesRequest newUserReq = new UserWithRolesRequest("u100", "secret", "u100@a.dk");
+    UserWithRolesRequest newUserReq = new UserWithRolesRequest("u100", "secret", "u100@a.dk", "newName", "newAddress");
     userWithRolesService.setDefaultRoleName("USER");
     mockMvc.perform(post("/api/user-with-role")
                     .contentType("application/json")

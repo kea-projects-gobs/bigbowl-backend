@@ -92,7 +92,7 @@ public class UserWithRolesService {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This email is used by another user");
     }
     String pw = body.getPassword();
-    UserWithRoles userWithRoles = new UserWithRoles(body.getUsername(), passwordEncoder.encode(pw), body.getEmail());
+    UserWithRoles userWithRoles = new UserWithRoles(body.getUsername(), passwordEncoder.encode(pw), body.getEmail(), body.getName(), body.getAddress());
     setDefaultRole(userWithRoles);
     return new UserWithRolesResponse(userWithRolesRepository.save(userWithRoles));
   }
