@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 //You can enable/disable these tests in you maven builds via the maven-surefire-plugin, in your pom-file
-@Tag("DisabledSecurityTest")
+//@Tag("DisabledSecurityTest")
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")  //Ensures that we use the in-memory database
@@ -62,8 +62,8 @@ public class AuthenticationTest {
                     .content(objectMapper.writeValueAsString(loginRequest)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.username").value("u1"))
-            .andExpect(jsonPath("$.roles", hasSize(2)))
-            .andExpect(jsonPath("$.roles", containsInAnyOrder("USER","ADMIN")))
+            .andExpect(jsonPath("$.roles", hasSize(3)))
+            .andExpect(jsonPath("$.roles", containsInAnyOrder("CUSTOMER","ADMIN","EMPLOYEE")))
             .andExpect(result -> {
               //Not a bulletproof test, but acceptable. First part should always be the same. A token must always contain two dots.
               String token = JsonPath.read(result.getResponse().getContentAsString(), "$.token");

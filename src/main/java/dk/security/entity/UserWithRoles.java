@@ -49,6 +49,12 @@ public class UserWithRoles implements UserDetails {
   @UpdateTimestamp
   private LocalDateTime edited;
 
+  String name;
+
+  String address;
+
+  boolean isDeleted;
+
 
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(name = "user_roles",
@@ -62,6 +68,14 @@ public class UserWithRoles implements UserDetails {
     this.username = user;
     setPassword(password);
     this.email = email;
+  }
+
+  public UserWithRoles(String username, String password, String email, String name, String address) {
+    this.username = username;
+    setPassword(password);
+    this.email = email;
+    this.name = name;
+    this.address = address;
   }
 
   public void setPassword(String pw){
