@@ -1,0 +1,7 @@
+package dk.bigbowl.reservation.repository;
+
+import dk.bigbowl.reservation.entity.Reservation;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ReservationRepository extends JpaRepository<Reservation, Long> {
+}
