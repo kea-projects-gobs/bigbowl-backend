@@ -86,10 +86,10 @@ public class UserWithRolesService {
    */
   public UserWithRolesResponse addUserWithRoles(UserWithRolesRequest body) {
     if (userWithRolesRepository.existsById(body.getUsername())) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This user name is taken");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Brugernavnet er allerede i brug");
     }
     if (userWithRolesRepository.existsByEmail(body.getEmail())) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This email is used by another user");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Emailen er allerede i brug");
     }
     String pw = body.getPassword();
     UserWithRoles userWithRoles = new UserWithRoles(body.getUsername(), passwordEncoder.encode(pw), body.getEmail(), body.getName(), body.getAddress());
