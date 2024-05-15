@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 //You can enable/disable these tests in you maven builds via the maven-surefire-plugin, in your pom-file
-@Tag("DisabledSecurityTest")
+//@Tag("DisabledSecurityTest")
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
