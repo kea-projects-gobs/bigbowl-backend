@@ -54,7 +54,7 @@ public class AuthorizationTest {
   void LoginAndGetTokens() throws Exception {
     user_adminJwtToken = loginAndGetToken("u1","secret");
     userJwtToken = loginAndGetToken("u2","secret");
-    adminJwtToken = loginAndGetToken("u3","secret");
+    adminJwtToken = loginAndGetToken("u1","secret");
     user_noRolesJwtToken = loginAndGetToken("u4","secret");
   }
 
@@ -84,7 +84,7 @@ public class AuthorizationTest {
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
                     .contentType("application/json"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.userName").value("u3"))
+            .andExpect(jsonPath("$.userName").value("u1"))
             .andExpect(jsonPath("$.message").value("Admin"));
   }
   @Test

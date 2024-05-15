@@ -15,4 +15,8 @@ public class UserWithRolesRequest {
     String password;
     @NonNull
     String email;
+    @NonNull
+    String name;
+    @NonNull
+    String address;
 }
