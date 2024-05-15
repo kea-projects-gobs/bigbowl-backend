@@ -14,8 +14,10 @@ public class TestUtils {
     String pw = "secret";
     Role customerRole = new Role("CUSTOMER");
     Role employeeRole = new Role("EMPLOYEE");
+    Role adminRole = new Role("ADMIN");
     roleRes.save(customerRole);
     roleRes.save(employeeRole);
+    roleRes.save(adminRole);
     UserWithRoles user1 = new UserWithRoles("u1", pwEn.encode(pw), "u1@a.dk");
     UserWithRoles user2 = new UserWithRoles("u2", pwEn.encode(pw), "u2@a.dk");
     UserWithRoles user3 = new UserWithRoles("u3", pwEn.encode(pw), "u3@a.dk");
@@ -24,6 +26,7 @@ public class TestUtils {
     user1.addRole(employeeRole);
     user2.addRole(customerRole);
     user3.addRole(employeeRole);
+    user1.addRole(adminRole);
     userWithRolesRepository.save(user1);
     userWithRolesRepository.save(user2);
     userWithRolesRepository.save(user3);

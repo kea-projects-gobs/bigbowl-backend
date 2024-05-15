@@ -64,7 +64,7 @@ class UserWithRoleControllerTest {
       userWithRolesRepository.deleteAll();
       TestUtils.setupTestUsers(userWithRolesRepository,roleRepository,passwordEncoder);
       userToken = loginAndGetToken("u2", "secret");
-      adminToken = loginAndGetToken("u3", "secret");
+      adminToken = loginAndGetToken("u1", "secret");
       dataInitialized = true;
     }
     userWithRolesService.setDefaultRoleName("USER"); //can also be done in the TEST application.properties
@@ -102,7 +102,7 @@ class UserWithRoleControllerTest {
   @Test
   void addUsersWithRoles() throws Exception {
     UserWithRolesRequest newUserReq = new UserWithRolesRequest("u100", "secret", "u100@a.dk", "newName", "newAddress");
-    userWithRolesService.setDefaultRoleName("USER");
+    userWithRolesService.setDefaultRoleName("CUSTOMER");
     mockMvc.perform(post("/api/user-with-role")
                     .contentType("application/json")
                     .content(objectMapper.writeValueAsString(newUserReq)))
@@ -110,7 +110,7 @@ class UserWithRoleControllerTest {
             .andExpect(jsonPath("$.userName").value("u100"))
             .andExpect(jsonPath("$.email").value("u100@a.dk"))
             .andExpect(jsonPath("$.roleNames", hasSize(1)))
-            .andExpect(jsonPath("$.roleNames", contains("USER")));
+            .andExpect(jsonPath("$.roleNames", contains("CUSTOMER")));
   }
 
   @Test
@@ -148,12 +148,12 @@ class UserWithRoleControllerTest {
 
   @Test
   void removeRole() throws Exception {
-    mockMvc.perform(patch("/api/user-with-role/remove-role/u1/USER")
+    mockMvc.perform(patch("/api/user-with-role/remove-role/u3/CUSTOMER")
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminToken)
                     .accept("application/json"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.userName").value("u1"))
+            .andExpect(jsonPath("$.userName").value("u3"))
             .andExpect(jsonPath("$.roleNames", hasSize(1)))
-            .andExpect(jsonPath("$.roleNames", contains("ADMIN")));
+            .andExpect(jsonPath("$.roleNames", contains("EMPLOYEE")));
   }
 }
