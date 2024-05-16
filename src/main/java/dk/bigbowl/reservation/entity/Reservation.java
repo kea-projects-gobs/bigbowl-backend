@@ -19,7 +19,7 @@ public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToMany(mappedBy = "reservation")
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)
     private List<ReservationItem> items;
     private boolean isConfirmed;
     private int noOfParticipants;

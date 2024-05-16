@@ -4,6 +4,7 @@ import dk.bigbowl.reservation.dto.ReservationItemRequest;
 import dk.bigbowl.reservation.dto.ReservationItemResponse;
 import dk.bigbowl.reservation.dto.ReservationRequest;
 import dk.bigbowl.reservation.dto.ReservationResponse;
+import dk.bigbowl.reservation.entity.Activity;
 import dk.bigbowl.reservation.entity.Reservation;
 import dk.bigbowl.reservation.entity.ReservationItem;
 import dk.bigbowl.reservation.repository.ActivityRepository;
@@ -12,6 +13,7 @@ import dk.bigbowl.reservation.service.ReservationService;
 import dk.security.repository.UserWithRolesRepository;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,8 +31,10 @@ public class ReservationServiceImpl implements ReservationService {
 
 
     @Override
-    public ReservationResponse createReservation(ReservationRequest reservationRequest) {
-        return null;
+    public ReservationResponse createReservation(ReservationRequest reservationRequest, Principal principal) {
+        Reservation reservation = convertToEntity(reservationRequest, principal);
+        reservationRepository.save(reservation);
+        return convertToDTO(reservation);
     }
 
     @Override
@@ -52,15 +56,18 @@ public class ReservationServiceImpl implements ReservationService {
 
 
     @Override
-    public Reservation convertToEntity(ReservationRequest reservationRequest) {
+    public Reservation convertToEntity(ReservationRequest reservationRequest, Principal principal) {
         Reservation reservation = new Reservation();
         reservation.setNoOfParticipants(reservationRequest.getNumberOfParticipants());
         reservation.setDate(reservationRequest.getDate());
-        reservation.setUser(userWithRolesRepository.findById(reservationRequest.getUserName()).orElseThrow(() -> new RuntimeException("User not found")));
+        String username = principal.getName();
+        reservation.setUser(userWithRolesRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found")));
 
         List<ReservationItem> reservationItems = reservationRequest.getReservationItems().stream()
                 .map(this::convertToReservationItemEntity)
                 .collect(Collectors.toList());
+
+        reservationItems.forEach(reservationItem -> reservationItem.setReservation(reservation));
         reservation.setItems(reservationItems);
 
         return reservation;
@@ -69,9 +76,10 @@ public class ReservationServiceImpl implements ReservationService {
 
     // ReservationItem converters
     private ReservationItem convertToReservationItemEntity(ReservationItemRequest reservationItemRequest) {
+        Activity activity = activityRepository.findByName(reservationItemRequest.getActivityName()).orElseThrow(() -> new RuntimeException("Activity not found"));
         ReservationItem reservationItem = new ReservationItem();
-        reservationItem.setActivity(activityRepository.findByName(reservationItemRequest.getActivityName()).orElseThrow(() -> new RuntimeException("Activity not found")));
-        reservationItem.setPrice(reservationItemRequest.getPrice());
+        reservationItem.setActivity(activity);
+        reservationItem.setPrice(activity.getType().getPrice());
         reservationItem.setStartTime(reservationItemRequest.getStartTime());
         reservationItem.setEndTime(reservationItemRequest.getEndTime());
 
@@ -81,7 +89,6 @@ public class ReservationServiceImpl implements ReservationService {
     private ReservationItemResponse convertToReservationItemResponseDTO(ReservationItem reservationItem) {
         ReservationItemResponse reservationItemResponse = new ReservationItemResponse();
         reservationItemResponse.setId(reservationItem.getId());
-        reservationItemResponse.setActivityName(reservationItem.getActivity().getName());
         reservationItemResponse.setActivityName(reservationItem.getActivity().getName());
         reservationItemResponse.setPrice(reservationItem.getPrice());
         reservationItemResponse.setStartTime(reservationItem.getStartTime());

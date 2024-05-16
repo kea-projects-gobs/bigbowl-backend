@@ -16,6 +16,5 @@ import java.util.List;
 public class ReservationRequest {
     private int numberOfParticipants;
     private LocalDate date;
-    private String userName;
     private List<ReservationItemRequest> reservationItems;
 }
