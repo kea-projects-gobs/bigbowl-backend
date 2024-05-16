@@ -7,7 +7,8 @@ import java.util.Optional;
 
 public interface ActivityRepository extends JpaRepository<Activity, Long>
 {
-    Optional<Activity> findByTypeName(String typeName);
+    //Optional<Activity> findByTypeName(String typeName);
     Optional<Activity> findByName(String name);
-    Optional<Activity> findFirstByTypeNameAndIsActiveTrue(String typeName);
+    // Used in attempt to automatically assign an activity to a reservation (e.g. Dinner Table 1, instead of it being specified in the request)
+    //Optional<Activity> findFirstByTypeNameAndIsActiveTrue(String typeName);
 }

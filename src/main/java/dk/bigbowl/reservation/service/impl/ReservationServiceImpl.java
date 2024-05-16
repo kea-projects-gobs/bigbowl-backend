@@ -105,7 +105,8 @@ public class ReservationServiceImpl implements ReservationService {
     private ReservationItemResponse convertToReservationItemResponseDTO(ReservationItem reservationItem) {
         ReservationItemResponse reservationItemResponse = new ReservationItemResponse();
         reservationItemResponse.setId(reservationItem.getId());
-        reservationItemResponse.setActivityName(reservationItem.getActivity().getType().getName());
+        // Could also be .getActivity().getType().getName() if we only need to see the activity?
+        reservationItemResponse.setActivityName(reservationItem.getActivity().getName());
         reservationItemResponse.setPrice(reservationItem.getPrice());
         reservationItemResponse.setStartTime(reservationItem.getStartTime());
         reservationItemResponse.setEndTime(reservationItem.getEndTime());
