@@ -64,7 +64,7 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setUser(userWithRolesRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found")));
 
         List<ReservationItem> reservationItems = reservationRequest.getReservationItems().stream()
-                .map(this::convertToReservationItemEntity)
+                .map(item -> convertToReservationItemEntity(item, reservationRequest.getNumberOfParticipants()))
                 .collect(Collectors.toList());
 
         reservationItems.forEach(reservationItem -> reservationItem.setReservation(reservation));
@@ -75,11 +75,12 @@ public class ReservationServiceImpl implements ReservationService {
 
 
     // ReservationItem converters
-    private ReservationItem convertToReservationItemEntity(ReservationItemRequest reservationItemRequest) {
+    private ReservationItem convertToReservationItemEntity(ReservationItemRequest reservationItemRequest, int numberOfParticipants) {
         Activity activity = activityRepository.findByName(reservationItemRequest.getActivityName()).orElseThrow(() -> new RuntimeException("Activity not found"));
         ReservationItem reservationItem = new ReservationItem();
         reservationItem.setActivity(activity);
-        reservationItem.setPrice(activity.getType().getPrice());
+        // Calculate price based on number of participants
+        reservationItem.setPrice(activity.getType().getPrice() * numberOfParticipants);
         reservationItem.setStartTime(reservationItemRequest.getStartTime());
         reservationItem.setEndTime(reservationItemRequest.getEndTime());
 
