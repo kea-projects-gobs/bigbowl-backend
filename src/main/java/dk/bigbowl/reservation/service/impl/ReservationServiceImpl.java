@@ -33,6 +33,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
 
+    // Remember to include token in the header when testing this method
     @Override
     public ReservationResponse createReservation(ReservationRequest reservationRequest, Principal principal) {
         Reservation reservation = convertToEntity(reservationRequest, principal);
