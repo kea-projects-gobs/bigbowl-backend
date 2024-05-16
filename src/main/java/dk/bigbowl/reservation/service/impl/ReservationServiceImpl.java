@@ -8,6 +8,7 @@ import dk.bigbowl.reservation.entity.Activity;
 import dk.bigbowl.reservation.entity.Reservation;
 import dk.bigbowl.reservation.entity.ReservationItem;
 import dk.bigbowl.reservation.repository.ActivityRepository;
+import dk.bigbowl.reservation.repository.ReservationItemRepository;
 import dk.bigbowl.reservation.repository.ReservationRepository;
 import dk.bigbowl.reservation.service.ReservationService;
 import dk.security.repository.UserWithRolesRepository;
@@ -22,11 +23,13 @@ public class ReservationServiceImpl implements ReservationService {
     private final ReservationRepository reservationRepository;
     private final UserWithRolesRepository userWithRolesRepository;
     private final ActivityRepository activityRepository;
+    private final ReservationItemRepository reservationItemRepository;
 
-    public ReservationServiceImpl(ReservationRepository reservationRepository, UserWithRolesRepository userWithRolesRepository, ActivityRepository activityRepository) {
+    public ReservationServiceImpl(ReservationRepository reservationRepository, UserWithRolesRepository userWithRolesRepository, ActivityRepository activityRepository, ReservationItemRepository reservationItemRepository) {
         this.reservationRepository = reservationRepository;
         this.userWithRolesRepository = userWithRolesRepository;
         this.activityRepository = activityRepository;
+        this.reservationItemRepository = reservationItemRepository;
     }
 
 
@@ -76,7 +79,19 @@ public class ReservationServiceImpl implements ReservationService {
 
     // ReservationItem converters
     private ReservationItem convertToReservationItemEntity(ReservationItemRequest reservationItemRequest, int numberOfParticipants) {
-        Activity activity = activityRepository.findByName(reservationItemRequest.getActivityName()).orElseThrow(() -> new RuntimeException("Activity not found"));
+        Activity activity = activityRepository.findByName(reservationItemRequest.getActivityName())
+                .orElseThrow(() -> new RuntimeException("No available activity found"));
+
+        // Check for overlapping reservations
+        boolean isOverlapping = reservationItemRepository.findByActivityIdAndStartTimeLessThanAndEndTimeGreaterThan(
+                activity.getId(), reservationItemRequest.getEndTime(), reservationItemRequest.getStartTime())
+                .stream()
+                .anyMatch(reservationItem -> true);
+
+        if (isOverlapping) {
+            throw new RuntimeException("The activity is already booked for the specified time slot");
+        }
+
         ReservationItem reservationItem = new ReservationItem();
         reservationItem.setActivity(activity);
         // Calculate price based on number of participants
@@ -90,7 +105,7 @@ public class ReservationServiceImpl implements ReservationService {
     private ReservationItemResponse convertToReservationItemResponseDTO(ReservationItem reservationItem) {
         ReservationItemResponse reservationItemResponse = new ReservationItemResponse();
         reservationItemResponse.setId(reservationItem.getId());
-        reservationItemResponse.setActivityName(reservationItem.getActivity().getName());
+        reservationItemResponse.setActivityName(reservationItem.getActivity().getType().getName());
         reservationItemResponse.setPrice(reservationItem.getPrice());
         reservationItemResponse.setStartTime(reservationItem.getStartTime());
         reservationItemResponse.setEndTime(reservationItem.getEndTime());

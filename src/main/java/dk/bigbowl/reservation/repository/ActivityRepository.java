@@ -9,4 +9,5 @@ public interface ActivityRepository extends JpaRepository<Activity, Long>
 {
     Optional<Activity> findByTypeName(String typeName);
     Optional<Activity> findByName(String name);
+    Optional<Activity> findFirstByTypeNameAndIsActiveTrue(String typeName);
 }
