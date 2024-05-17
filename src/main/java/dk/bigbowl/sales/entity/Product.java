@@ -21,6 +21,7 @@ public class Product {
     private double price;
     private String description;
     private String imageUrl;
+    private boolean isActive;
 
     @ManyToOne
     private ProductCategory productCategory;

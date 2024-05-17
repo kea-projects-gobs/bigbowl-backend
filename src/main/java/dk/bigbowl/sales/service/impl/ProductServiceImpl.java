@@ -22,6 +22,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDTO createProduct(ProductDTO productDTO) {
         Product product = convertToEntity(productDTO);
+        product.setActive(true);
         return convertToDTO(productRepository.save(product));
     }
 
@@ -34,6 +35,7 @@ public class ProductServiceImpl implements ProductService {
         dto.setPrice(product.getPrice());
         dto.setDescription(product.getDescription());
         dto.setImageUrl(product.getImageUrl());
+        dto.setActive(product.isActive());
         dto.setProductCategory(product.getProductCategory().getName());
         return dto;
     }
@@ -46,6 +48,7 @@ public class ProductServiceImpl implements ProductService {
         product.setPrice(productDTO.getPrice());
         product.setDescription(productDTO.getDescription());
         product.setImageUrl(productDTO.getImageUrl());
+        product.setActive(productDTO.isActive());
         String categoryName = productDTO.getProductCategory();
         ProductCategory category = productCategoryRepository.findByName(categoryName);
         product.setProductCategory(category);

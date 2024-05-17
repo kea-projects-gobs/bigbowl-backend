@@ -16,5 +16,6 @@ public class ProductDTO {
     private double price;
     private String description;
     private String imageUrl;
+    private boolean isActive;
     private String productCategory;
 }
