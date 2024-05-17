@@ -8,6 +8,9 @@ import dk.bigbowl.sales.repository.ProductRepository;
 import dk.bigbowl.sales.service.ProductService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class ProductServiceImpl implements ProductService {
 
@@ -20,10 +23,50 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<ProductDTO> getAllProducts() {
+        return productRepository.findAllByIsActiveTrue().stream()
+                .map(this::convertToDTO)
+                .toList();
+    }
+
+    @Override
+    public ProductDTO getProductById(Long id) {
+        Optional<Product> product = productRepository.findById(id)
+                .filter(Product::isActive);
+        return product.map(this::convertToDTO)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+    }
+
+    @Override
     public ProductDTO createProduct(ProductDTO productDTO) {
         Product product = convertToEntity(productDTO);
         product.setActive(true);
         return convertToDTO(productRepository.save(product));
+    }
+
+    @Override
+    public ProductDTO updateProduct(Long id, ProductDTO productDTO) {
+        Product existingProduct = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        existingProduct.setName(productDTO.getName());
+        existingProduct.setStock(productDTO.getStock());
+        existingProduct.setPrice(productDTO.getPrice());
+        existingProduct.setDescription(productDTO.getDescription());
+        existingProduct.setImageUrl(productDTO.getImageUrl());
+
+        String categoryName = productDTO.getProductCategory();
+        ProductCategory category = productCategoryRepository.findByName(categoryName);
+        existingProduct.setProductCategory(category);
+
+        return convertToDTO(productRepository.save(existingProduct));
+    }
+
+    @Override
+    public void deleteProduct(Long id) {
+        Product product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+        product.setActive(false);
+        productRepository.save(product);
     }
 
     @Override
@@ -49,6 +92,7 @@ public class ProductServiceImpl implements ProductService {
         product.setDescription(productDTO.getDescription());
         product.setImageUrl(productDTO.getImageUrl());
         product.setActive(productDTO.isActive());
+
         String categoryName = productDTO.getProductCategory();
         ProductCategory category = productCategoryRepository.findByName(categoryName);
         product.setProductCategory(category);
