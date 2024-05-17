@@ -28,6 +28,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDTO convertToDTO(Product product) {
         ProductDTO dto = new ProductDTO();
+        dto.setId(product.getId());
         dto.setName(product.getName());
         dto.setStock(product.getStock());
         dto.setPrice(product.getPrice());

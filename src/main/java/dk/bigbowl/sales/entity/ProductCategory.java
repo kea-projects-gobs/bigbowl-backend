@@ -20,4 +20,8 @@ public class ProductCategory {
     private String name;
     @OneToMany(mappedBy = "productCategory")
     private List<Product> products;
+
+    public ProductCategory(String name) {
+        this.name = name;
+    }
 }
