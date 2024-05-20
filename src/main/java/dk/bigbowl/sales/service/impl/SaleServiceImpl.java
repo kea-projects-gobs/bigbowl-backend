@@ -12,6 +12,7 @@ import dk.security.repository.UserWithRolesRepository;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,7 +67,7 @@ public class SaleServiceImpl implements SaleService {
     public Sale convertToEntity(SaleDTO saleDTO, Principal principal) {
         Sale sale = new Sale();
         sale.setId(saleDTO.getId());
-        sale.setDate(saleDTO.getDate());
+        sale.setDate(LocalDate.now());
         String employee = principal.getName();
         sale.setEmployee(userWithRolesRepository.findByUsername(employee).orElseThrow(() -> new RuntimeException("User not found")));
 
