@@ -5,6 +5,7 @@ import dk.bigbowl.sales.dto.SalesItemDTO;
 import dk.bigbowl.sales.entity.Sale;
 import dk.bigbowl.sales.entity.SalesItem;
 import dk.bigbowl.sales.repository.ProductRepository;
+import dk.bigbowl.sales.repository.SaleRepository;
 import dk.bigbowl.sales.service.ProductService;
 import dk.bigbowl.sales.service.SaleService;
 import dk.security.repository.UserWithRolesRepository;
@@ -20,16 +21,20 @@ public class SaleServiceImpl implements SaleService {
     private final UserWithRolesRepository userWithRolesRepository;
     private final ProductRepository productRepository;
     private final ProductService productService;
+    private final SaleRepository saleRepository;
 
-    public SaleServiceImpl(UserWithRolesRepository userWithRolesRepository, ProductRepository productRepository, ProductService productService) {
+    public SaleServiceImpl(UserWithRolesRepository userWithRolesRepository, ProductRepository productRepository, ProductService productService, SaleRepository saleRepository) {
         this.userWithRolesRepository = userWithRolesRepository;
         this.productRepository = productRepository;
         this.productService = productService;
+        this.saleRepository = saleRepository;
     }
 
     @Override
-    public SaleDTO createSale(SaleDTO saleDTO) {
-        return null;
+    public SaleDTO createSale(SaleDTO saleDTO, Principal principal) {
+        Sale sale = convertToEntity(saleDTO, principal);
+        saleRepository.save(sale);
+        return convertToDTO(sale);
     }
 
     @Override
@@ -81,7 +86,7 @@ public class SaleServiceImpl implements SaleService {
         salesItem.setProduct(productRepository.findById(dto.getProduct().getId())
             .orElseThrow(() -> new RuntimeException("Product not found")));
         salesItem.setQuantity(dto.getQuantity());
-        salesItem.setUnitPrice(dto.getUnitPrice());
+        salesItem.setUnitPrice(salesItem.getProduct().getPrice());
         return salesItem;
     }
     

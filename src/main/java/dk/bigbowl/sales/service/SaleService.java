@@ -7,7 +7,7 @@ import java.security.Principal;
 import java.util.List;
 
 public interface SaleService {
-    SaleDTO createSale(SaleDTO saleDTO);
+    SaleDTO createSale(SaleDTO saleDTO, Principal principal);
     List<SaleDTO> getAllSales();
     SaleDTO getSaleById(Long id);
 
