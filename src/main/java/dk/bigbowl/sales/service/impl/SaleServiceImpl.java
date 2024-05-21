@@ -12,7 +12,6 @@ import dk.security.repository.UserWithRolesRepository;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,12 +40,16 @@ public class SaleServiceImpl implements SaleService {
 
     @Override
     public List<SaleDTO> getAllSales() {
-        return null;
+        return saleRepository.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
     public SaleDTO getSaleById(Long id) {
-        return null;
+        return saleRepository.findById(id)
+                .map(this::convertToDTO)
+                .orElseThrow(() -> new RuntimeException("Sale not found"));
     }
 
     @Override
