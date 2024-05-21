@@ -1,7 +1,6 @@
 package dk.bigbowl.sales.api;
 
 import dk.bigbowl.sales.dto.ProductCategoryDTO;
-import dk.bigbowl.sales.entity.ProductCategory;
 import dk.bigbowl.sales.service.ProductCategoryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
