@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class SaleDTO {
     private Long id;
-    private LocalDate date;
+    private LocalDateTime date;
     private String employee;
     private List<SalesItemDTO> salesItems;
 }

@@ -14,5 +14,4 @@ public class SalesItemDTO {
     private ProductDTO product;
     private int quantity;
     private double unitPrice;
-    private SaleDTO sale;
 }
