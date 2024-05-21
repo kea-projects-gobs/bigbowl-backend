@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+//import java.util.List;
 
 @Getter
 @Setter
@@ -13,5 +13,5 @@ import java.util.List;
 @NoArgsConstructor
 public class ProductCategoryDTO {
     private String name;
-    private List<ProductDTO> products;
+    //private List<ProductDTO> products;
 }
