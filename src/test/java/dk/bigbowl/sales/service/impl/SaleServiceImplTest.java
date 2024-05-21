@@ -26,7 +26,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -68,7 +67,7 @@ class SaleServiceImplTest {
         // Assert
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        assertEquals(1L, result.get(0).getId());  // Example assertion
+        assertEquals(1L, result.get(0).getId());
         verify(saleRepository).findAll();
     }
 
@@ -127,7 +126,7 @@ class SaleServiceImplTest {
         sale.setSalesItems(Collections.singletonList(salesItem));
 
         when(principal.getName()).thenReturn("username");
-        when(userWithRolesRepository.findByUsername("username")).thenReturn(Optional.of(new UserWithRoles())); // Assuming User is a valid entity
+        when(userWithRolesRepository.findByUsername("username")).thenReturn(Optional.of(new UserWithRoles()));
         when(productRepository.findById(productId)).thenReturn(Optional.of(product));
         when(saleRepository.save(any(Sale.class))).thenReturn(sale);
 
@@ -154,12 +153,10 @@ class SaleServiceImplTest {
         SalesItem item1 = new SalesItem();
         item1.setId(1L);
         item1.setQuantity(5);
-        // Assume Product is set up elsewhere or mocked
     
         SalesItem item2 = new SalesItem();
         item2.setId(2L);
         item2.setQuantity(3);
-        // Assume Product is set up elsewhere or mocked
     
         // Create Sale instance
         Sale sale = new Sale();
