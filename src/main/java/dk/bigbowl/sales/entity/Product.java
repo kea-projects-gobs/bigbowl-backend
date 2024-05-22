@@ -25,4 +25,14 @@ public class Product {
 
     @ManyToOne
     private ProductCategory productCategory;
+
+    public Product(String name, int stock, double price, String description, String imageUrl, boolean isActive, ProductCategory productCategory) {
+        this.name = name;
+        this.stock = stock;
+        this.price = price;
+        this.description = description;
+        this.imageUrl = imageUrl;
+        this.isActive = isActive;
+        this.productCategory = productCategory;
+    }
 }
