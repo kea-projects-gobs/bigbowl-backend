@@ -40,7 +40,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 case "Bowling Sko" -> numberOfLanes * 6;
                 case "Bowling Kugler" -> numberOfLanes * 12;
                 case "Air Hockey Håndtag" -> numberOfAirHockeyTables * 2;
-                case "Air Hockey Pucks" -> numberOfAirHockeyTables * 12;
+                case "Air Hockey Pucks" -> numberOfAirHockeyTables * 4;
                 default -> 0;
             };
 
@@ -75,10 +75,10 @@ public class EquipmentServiceImpl implements EquipmentService {
             case "Bowling Kugler":
                 minimumStock = numberOfLanes * 12;
                 break;
-            case "Air hockey håndtag":
+            case "Air Hockey Håndtag":
                 minimumStock = numberOfAirHockeyTables * 2;
                 break;
-            case "Air hockey pucks":
+            case "Air Hockey Pucks":
                 minimumStock = numberOfAirHockeyTables * 4; 
                 break;
             default:
