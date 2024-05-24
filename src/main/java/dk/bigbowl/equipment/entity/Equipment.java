@@ -17,9 +17,20 @@ public class Equipment {
     Long id;
     String name;
     String description;
-    String image_url;
+    String imageUrl;
     int stock;
 
     @ManyToOne
     EquipmentCategory category;
+
+    @Transient
+    private int requiredAmount;
+
+    public Equipment(String name, String description, String imageUrl, int stock, EquipmentCategory category) {
+        this.name = name;
+        this.description = description;
+        this.imageUrl = imageUrl;
+        this.stock = stock;
+        this.category = category;
+    }
 }

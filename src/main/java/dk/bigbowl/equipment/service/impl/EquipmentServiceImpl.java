@@ -24,18 +24,54 @@ public class EquipmentServiceImpl implements EquipmentService {
         int MINIMUM_BOWLING_PINS = numberOfLanes * 9;
         int MINIMUM_BOWLING_SHOES = numberOfLanes * 6;
 
-        return checkAndOrderSpecificEquipment("Bowling Pins", MINIMUM_BOWLING_PINS) +
-                checkAndOrderSpecificEquipment("Bowling Shoes", MINIMUM_BOWLING_SHOES);
+        return checkAndOrderSpecificEquipment("Bowling Kegler", MINIMUM_BOWLING_PINS) +
+                checkAndOrderSpecificEquipment("Bowling Sko", MINIMUM_BOWLING_SHOES);
     }
 
     @Override
     public List<Equipment> getAllEquipment() {
-        return equipmentRepository.findAll();
+        List<Equipment> equipmentList = equipmentRepository.findAll();
+        int numberOfLanes = activityRepository.countByTypeName("Bowling");
+
+        for (Equipment equipment : equipmentList) {
+            int minimumStock = switch (equipment.getName()) {
+                case "Bowling Kegler" -> numberOfLanes * 9;
+                case "Bowling Sko" -> numberOfLanes * 6;
+                default -> 0;
+            };
+
+            if (minimumStock > 0 && equipment.getStock() < minimumStock) {
+                equipment.setRequiredAmount(minimumStock - equipment.getStock());
+            } else {
+                equipment.setRequiredAmount(0);
+            }
+        }
+
+        return equipmentList;
     }
 
     @Override
     public Equipment getEquipmentById(Long id) {
         return equipmentRepository.findById(id).orElseThrow(() -> new RuntimeException("Equipment not found"));
+    }
+
+    @Override
+    public String orderSpecificEquipment(String equipmentName) {
+        int numberOfLanes = activityRepository.countByTypeName("Bowling");
+        int minimumStock;
+
+        switch (equipmentName) {
+            case "Bowling Kegler":
+                minimumStock = numberOfLanes * 9;
+                break;
+            case "Bowling Sko":
+                minimumStock = numberOfLanes * 6;
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown equipment: " + equipmentName);
+        }
+
+        return checkAndOrderSpecificEquipment(equipmentName, minimumStock);
     }
 
     private String checkAndOrderSpecificEquipment(String equipmentName, int minimumStock) {
@@ -44,8 +80,8 @@ public class EquipmentServiceImpl implements EquipmentService {
             int needed = minimumStock - equipment.getStock();
             equipment.setStock(equipment.getStock() + needed);
             equipmentRepository.save(equipment);
-            return "Ordered " + needed + " replacements for " + equipment.getName() + ".\n";
+            return "Bestilt " + needed + " nye " + equipment.getName() + ".\n";
         }
-        return "No replacements needed for " + equipmentName + ".\n";
+        return "Der er nok " + equipmentName + " på lager";
     }
 }

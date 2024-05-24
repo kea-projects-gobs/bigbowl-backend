@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/equipment")
+@RequestMapping("/api/equipment")
 public class EquipmentController {
 
     private final EquipmentService equipmentService;
@@ -20,7 +20,8 @@ public class EquipmentController {
 
     @GetMapping
     public ResponseEntity<List<Equipment>> getAllEquipment() {
-        return ResponseEntity.ok().body(equipmentService.getAllEquipment());
+        List<Equipment> equipmentList = equipmentService.getAllEquipment();
+        return ResponseEntity.ok().body(equipmentList);
     }
 
     @GetMapping("/{id}")
@@ -28,9 +29,9 @@ public class EquipmentController {
         return ResponseEntity.ok().body(equipmentService.getEquipmentById(id));
     }
 
-    @PostMapping
-    public ResponseEntity<String> checkAndOrderEquipment() {
-        String result = equipmentService.checkAndOrderEquipment();
+    @PostMapping("/order")
+    public ResponseEntity<String> checkAndOrderEquipment(@RequestParam String equipmentName) {
+        String result = equipmentService.orderSpecificEquipment(equipmentName);
         return ResponseEntity.ok(result);
     }
 }

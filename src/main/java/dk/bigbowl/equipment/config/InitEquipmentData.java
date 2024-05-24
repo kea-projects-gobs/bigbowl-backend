@@ -4,7 +4,6 @@ import dk.bigbowl.equipment.entity.Equipment;
 import dk.bigbowl.equipment.entity.EquipmentCategory;
 import dk.bigbowl.equipment.repository.EquipmentCategoryRepository;
 import dk.bigbowl.equipment.repository.EquipmentRepository;
-import dk.bigbowl.equipment.service.EquipmentService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -33,10 +32,10 @@ public class InitEquipmentData implements CommandLineRunner {
     private void initEquipment() {
         EquipmentCategory bowlingCategory = equipmentCategoryRepository.findById("Bowling").orElse(null);
         if (bowlingCategory != null) {
-            Equipment bowlingPins = new Equipment(null, "Bowling Pins", "Standard bowling pin", "url_to_image", 40, bowlingCategory);
+            Equipment bowlingPins = new Equipment("Bowling Kegler", "Standard bowling kegle", "url_to_image", 40, bowlingCategory);
             equipmentRepository.save(bowlingPins);
 
-            Equipment bowlingShoes = new Equipment(null, "Bowling Shoes", "Standard bowling shoes", "url_to_image", 24 * 6, bowlingCategory);
+            Equipment bowlingShoes = new Equipment("Bowling Sko", "Standard bowling sko", "url_to_image", 24 * 6, bowlingCategory);
             equipmentRepository.save(bowlingShoes);
         }
     }
