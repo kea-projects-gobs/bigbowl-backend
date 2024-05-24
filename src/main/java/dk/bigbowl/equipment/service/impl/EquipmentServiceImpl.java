@@ -6,6 +6,8 @@ import dk.bigbowl.equipment.service.EquipmentService;
 import dk.bigbowl.reservation.repository.ActivityRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class EquipmentServiceImpl implements EquipmentService {
 
@@ -24,6 +26,16 @@ public class EquipmentServiceImpl implements EquipmentService {
 
         return checkAndOrderSpecificEquipment("Bowling Pins", MINIMUM_BOWLING_PINS) +
                 checkAndOrderSpecificEquipment("Bowling Shoes", MINIMUM_BOWLING_SHOES);
+    }
+
+    @Override
+    public List<Equipment> getAllEquipment() {
+        return equipmentRepository.findAll();
+    }
+
+    @Override
+    public Equipment getEquipmentById(Long id) {
+        return equipmentRepository.findById(id).orElseThrow(() -> new RuntimeException("Equipment not found"));
     }
 
     private String checkAndOrderSpecificEquipment(String equipmentName, int minimumStock) {

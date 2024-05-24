@@ -1,11 +1,12 @@
 
 package dk.bigbowl.equipment.api;
 
+import dk.bigbowl.equipment.entity.Equipment;
 import dk.bigbowl.equipment.service.EquipmentService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/equipment")
@@ -15,6 +16,16 @@ public class EquipmentController {
 
     public EquipmentController(EquipmentService equipmentService) {
         this.equipmentService = equipmentService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Equipment>> getAllEquipment() {
+        return ResponseEntity.ok().body(equipmentService.getAllEquipment());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Equipment> getEquipmentById(@PathVariable Long id) {
+        return ResponseEntity.ok().body(equipmentService.getEquipmentById(id));
     }
 
     @PostMapping
