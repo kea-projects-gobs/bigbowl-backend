@@ -32,11 +32,15 @@ public class EquipmentServiceImpl implements EquipmentService {
     public List<Equipment> getAllEquipment() {
         List<Equipment> equipmentList = equipmentRepository.findAll();
         int numberOfLanes = activityRepository.countByTypeName("Bowling");
+        int numberOfAirHockeyTables = activityRepository.countByTypeName("Air hockey");
 
         for (Equipment equipment : equipmentList) {
             int minimumStock = switch (equipment.getName()) {
                 case "Bowling Kegler" -> numberOfLanes * 9;
                 case "Bowling Sko" -> numberOfLanes * 6;
+                case "Bowling Kugler" -> numberOfLanes * 12;
+                case "Air Hockey Håndtag" -> numberOfAirHockeyTables * 2;
+                case "Air Hockey Pucks" -> numberOfAirHockeyTables * 12;
                 default -> 0;
             };
 
@@ -58,6 +62,7 @@ public class EquipmentServiceImpl implements EquipmentService {
     @Override
     public String orderSpecificEquipment(String equipmentName) {
         int numberOfLanes = activityRepository.countByTypeName("Bowling");
+        int numberOfAirHockeyTables = activityRepository.countByTypeName("Air hockey");
         int minimumStock;
 
         switch (equipmentName) {
@@ -66,6 +71,15 @@ public class EquipmentServiceImpl implements EquipmentService {
                 break;
             case "Bowling Sko":
                 minimumStock = numberOfLanes * 6;
+                break;
+            case "Bowling Kugler":
+                minimumStock = numberOfLanes * 12;
+                break;
+            case "Air hockey håndtag":
+                minimumStock = numberOfAirHockeyTables * 2;
+                break;
+            case "Air hockey pucks":
+                minimumStock = numberOfAirHockeyTables * 4; 
                 break;
             default:
                 throw new IllegalArgumentException("Unknown equipment: " + equipmentName);
