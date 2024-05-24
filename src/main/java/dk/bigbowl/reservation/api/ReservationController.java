@@ -1,5 +1,6 @@
 package dk.bigbowl.reservation.api;
 
+import dk.bigbowl.reservation.dto.ReservationQuoteResDto;
 import dk.bigbowl.reservation.dto.ReservationRequest;
 import dk.bigbowl.reservation.dto.ReservationResponse;
 import dk.bigbowl.reservation.service.ReservationService;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/reservation")
+@RequestMapping("/api/reservations")
 public class ReservationController {
 
     private final ReservationService reservationService;
@@ -23,7 +24,7 @@ public class ReservationController {
     }
 
     @PostMapping
-    public ResponseEntity<ReservationResponse> createReservation(@RequestBody ReservationRequest reservationRequest, Principal principal) {
+    public ResponseEntity<ReservationResponse> createReservation(@RequestBody ReservationQuoteResDto reservationRequest, Principal principal) {
         return ResponseEntity.ok().body(reservationService.createReservation(reservationRequest, principal));
     }
 
