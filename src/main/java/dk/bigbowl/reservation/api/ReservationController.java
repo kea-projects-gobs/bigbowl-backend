@@ -6,12 +6,10 @@ import dk.bigbowl.reservation.dto.ReservationResponse;
 import dk.bigbowl.reservation.service.ReservationService;
 
 import java.security.Principal;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/reservations")
@@ -26,6 +24,11 @@ public class ReservationController {
     @PostMapping
     public ResponseEntity<ReservationResponse> createReservation(@RequestBody ReservationQuoteResDto reservationRequest, Principal principal) {
         return ResponseEntity.ok().body(reservationService.createReservation(reservationRequest, principal));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ReservationResponse>> getAllReservations(Principal principal) {
+        return ResponseEntity.ok().body(reservationService.getAllReservations(principal));
     }
 
 }
