@@ -50,18 +50,20 @@ public class InitData implements CommandLineRunner {
                 activityRepository.save(new Activity("Air Hockey Table " + i, "Air Hockey Table" + i, "Table " + i, airHockey, true, null, 2, false));
             }
 
-            // Create 10 dining tables
-            for (int i = 1; i <= 5; i++) {
-                activityRepository.save(new Activity("Dining Table " + i, "Dining Table" + i, "Table " + i, dining, true, null, 4, false));
-            }
+            activityRepository.save(new Activity("Dining", "Dining", "", dining, true, null, 100, true));
 
-            for (int i = 6; i <= 8; i++) {
-                activityRepository.save(new Activity("Dining Table " + i, "Dining Table" + i, "Table " + i, dining, true, null, 6, false));
-            }
-
-            for (int i = 9; i <= 10; i++) {
-                activityRepository.save(new Activity("Dining Table " + i, "Dining Table" + i, "Table " + i, dining, true, null, 2, false));
-            }
+//            // Create 10 dining tables
+//            for (int i = 1; i <= 5; i++) {
+//                activityRepository.save(new Activity("Dining Table " + i, "Dining Table" + i, "Table " + i, dining, true, null, 4, false));
+//            }
+//
+//            for (int i = 6; i <= 8; i++) {
+//                activityRepository.save(new Activity("Dining Table " + i, "Dining Table" + i, "Table " + i, dining, true, null, 6, false));
+//            }
+//
+//            for (int i = 9; i <= 10; i++) {
+//                activityRepository.save(new Activity("Dining Table " + i, "Dining Table" + i, "Table " + i, dining, true, null, 2, false));
+//            }
         }
     }
 }
