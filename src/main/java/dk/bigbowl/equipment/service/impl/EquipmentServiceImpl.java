@@ -19,15 +19,6 @@ public class EquipmentServiceImpl implements EquipmentService {
         this.activityRepository = activityRepository;
     }
 
-    public String checkAndOrderEquipment() {
-        int numberOfLanes = activityRepository.countByTypeName("Bowling");
-        int MINIMUM_BOWLING_PINS = numberOfLanes * 9;
-        int MINIMUM_BOWLING_SHOES = numberOfLanes * 6;
-
-        return checkAndOrderSpecificEquipment("Bowling Kegler", MINIMUM_BOWLING_PINS) +
-                checkAndOrderSpecificEquipment("Bowling Sko", MINIMUM_BOWLING_SHOES);
-    }
-
     @Override
     public List<Equipment> getAllEquipment() {
         List<Equipment> equipmentList = equipmentRepository.findAll();
@@ -63,27 +54,14 @@ public class EquipmentServiceImpl implements EquipmentService {
     public String orderSpecificEquipment(String equipmentName) {
         int numberOfLanes = activityRepository.countByTypeName("Bowling");
         int numberOfAirHockeyTables = activityRepository.countByTypeName("Air hockey");
-        int minimumStock;
-
-        switch (equipmentName) {
-            case "Bowling Kegler":
-                minimumStock = numberOfLanes * 9;
-                break;
-            case "Bowling Sko":
-                minimumStock = numberOfLanes * 6;
-                break;
-            case "Bowling Kugler":
-                minimumStock = numberOfLanes * 12;
-                break;
-            case "Air Hockey Håndtag":
-                minimumStock = numberOfAirHockeyTables * 2;
-                break;
-            case "Air Hockey Pucks":
-                minimumStock = numberOfAirHockeyTables * 4; 
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown equipment: " + equipmentName);
-        }
+        int minimumStock = switch (equipmentName) {
+            case "Bowling Kegler" -> numberOfLanes * 9;
+            case "Bowling Sko" -> numberOfLanes * 6;
+            case "Bowling Kugler" -> numberOfLanes * 12;
+            case "Air Hockey Håndtag" -> numberOfAirHockeyTables * 2;
+            case "Air Hockey Pucks" -> numberOfAirHockeyTables * 4;
+            default -> throw new IllegalArgumentException("Unknown equipment: " + equipmentName);
+        };
 
         return checkAndOrderSpecificEquipment(equipmentName, minimumStock);
     }
