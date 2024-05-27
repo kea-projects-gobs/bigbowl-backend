@@ -60,9 +60,9 @@ public class ReservationServiceImpl implements ReservationService {
         String username = principal.getName();
         System.out.println("username: " + username);
         var user = userWithRolesRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
-//        if (user.getRoles().stream().noneMatch(role -> role.getRoleName().equals("CUSTOMER"))) {
-//            throw new RuntimeException("User not allowed");
-//        }
+        if (user.getRoles().stream().noneMatch(role -> role.getRoleName().equals("CUSTOMER"))) {
+            throw new RuntimeException("User not allowed");
+        }
         List<Reservation> reservationList = reservationRepository.findAllByUser(user);
 
         return reservationList.stream().map(this::convertToDTO).collect(Collectors.toList());
