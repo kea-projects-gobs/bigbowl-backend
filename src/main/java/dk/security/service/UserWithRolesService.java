@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserWithRolesService {
@@ -108,8 +109,12 @@ public class UserWithRolesService {
     }
   }
 
-  public List<String> getAllUsernames(){
-    return userWithRolesRepository.findAll().stream().map(UserWithRoles::getUsername).toList();
+  public List<String> getAllUsernamesExcludingRoles(List<String> excludedRoles) {
+    return userWithRolesRepository.findAll().stream()
+            .filter(user -> user.getRoles().stream()
+                    .noneMatch(role -> excludedRoles.contains(role.getRoleName())))
+            .map(UserWithRoles::getUsername)
+            .collect(Collectors.toList());
   }
 
 }

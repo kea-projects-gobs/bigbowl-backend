@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -47,6 +48,7 @@ public class UserWithRoleController {
 
   @GetMapping
   public ResponseEntity<List<String>> getAllUsernames(){
-    return ResponseEntity.ok().body(userWithRolesService.getAllUsernames());
+    List<String> excludedRoles = Arrays.asList("ADMIN", "CUSTOMER", "OPERATOR");
+    return ResponseEntity.ok().body(userWithRolesService.getAllUsernamesExcludingRoles(excludedRoles));
   }
 }
