@@ -12,6 +12,7 @@ import dk.security.repository.UserWithRolesRepository;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,6 +55,34 @@ public class ReservationServiceImpl implements ReservationService {
         return convertToDTO(reservation);
     }
 
+    @Override
+    public List<ReservationResponse> getAllReservations(Principal principal) {
+        String username = principal.getName();
+        System.out.println("username: " + username);
+        var user = userWithRolesRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+        if (user.getRoles().stream().noneMatch(role -> role.getRoleName().equals("CUSTOMER"))) {
+            throw new RuntimeException("User not allowed");
+        }
+        List<Reservation> reservationList = reservationRepository.findAllByUser(user);
+
+        return reservationList.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteReservation(Long id, Principal principal) {
+        String username = principal.getName();
+        System.out.println("username: " + username);
+        var user = userWithRolesRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+        if (user.getRoles().stream().noneMatch(role -> role.getRoleName().equals("CUSTOMER"))) {
+            throw new RuntimeException("User not allowed");
+        }
+        Reservation reservation = reservationRepository.findById(id).orElseThrow(() -> new RuntimeException("Reservation not found"));
+        if (!reservation.getUser().equals(user)) {
+            throw new RuntimeException("User not allowed");
+        }
+        reservationRepository.delete(reservation);
+    }
+
 
     private ReservationResponse convertToDTO(Reservation reservation) {
         ReservationResponse reservationResponse = new ReservationResponse();
@@ -61,6 +90,7 @@ public class ReservationServiceImpl implements ReservationService {
         reservationResponse.setNoOfParticipants(reservation.getNoOfParticipants());
         reservationResponse.setUserName(reservation.getUser().getUsername());
         reservationResponse.setDate(reservation.getDate());
+        reservationResponse.setConfirmed(reservation.isConfirmed());
 
         reservationResponse.setReservationItems(reservation.getItems().stream()
                 .map(reservationItem -> {
