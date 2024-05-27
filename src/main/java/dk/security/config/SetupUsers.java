@@ -37,10 +37,9 @@ public class SetupUsers implements ApplicationRunner {
 
     private void setupAllowedRoles() {
         roleRepository.save(new Role("CUSTOMER"));
-        roleRepository.save(new Role("EMPLOYEE"));
-        roleRepository.save(new Role("RESERVATION_SALE"));
+        roleRepository.save(new Role("SALE"));
         roleRepository.save(new Role("OPERATOR"));
-        roleRepository.save(new Role("ADMIN"));
+        roleRepository.save(new Role("MANAGER"));
     }
 
     private void setUpCustomers() {
@@ -52,32 +51,20 @@ public class SetupUsers implements ApplicationRunner {
     }
 
     private void setUpEmployees() {
-        Role roleEmployee = roleRepository.findById("EMPLOYEE").orElseThrow(() -> new NoSuchElementException("Role 'employee' not found"));
-        Role roleReservationSale = roleRepository.findById("RESERVATION_SALE").orElseThrow(() -> new NoSuchElementException("Role 'reservation_sale' not found"));
+        Role roleSale = roleRepository.findById("SALE").orElseThrow(() -> new NoSuchElementException("Role 'reservation_sale' not found"));
         Role roleOperator = roleRepository.findById("OPERATOR").orElseThrow(() -> new NoSuchElementException("Role 'operator' not found"));
 
-        // 12 employees in different roles schedules
+
+        // 12 employees to handle reservations and sales
         for (int i = 1; i <= 12; i++) {
-            String username = "employee" + i;
-            String email = "employee" + i + "@mail.com";
-            String name = "Employee " + i;
-            String address = "Employee Address " + i;
+            String username = "Sale" + i;
+            String email = "Sale" + i + "@mail.com";
+            String name = "Sale " + i;
+            String address = "Sale Address " + i;
 
-            UserWithRoles employee = new UserWithRoles(username, pwEncoder.encode("secret"), email, name, address);
-            employee.addRole(roleEmployee);
-            userWithRolesRepository.save(employee);
-        }
-
-        // 2 employees to handle reservations and sales
-        for (int i = 1; i <= 2; i++) {
-            String username = "reservationSale" + i;
-            String email = "reservationSale" + i + "@mail.com";
-            String name = "Reservation Sale " + i;
-            String address = "Reservation Sale Address " + i;
-
-            UserWithRoles reservationSale = new UserWithRoles(username, pwEncoder.encode("secret"), email, name, address);
-            reservationSale.addRole(roleReservationSale);
-            userWithRolesRepository.save(reservationSale);
+            UserWithRoles Sale = new UserWithRoles(username, pwEncoder.encode("secret"), email, name, address);
+            Sale.addRole(roleSale);
+            userWithRolesRepository.save(Sale);
         }
 
         // 1 operator
@@ -87,10 +74,10 @@ public class SetupUsers implements ApplicationRunner {
     }
 
     private void setupAdmin() {
-        Role roleAdmin = roleRepository.findById("ADMIN").orElseThrow(() -> new NoSuchElementException("Role 'admin' not found"));
-        UserWithRoles testadmin = new UserWithRoles("admin", pwEncoder.encode("secret"), "admin@mail.com", "Admin", "Pilegårdsvej 22");
+        Role roleManager = roleRepository.findById("MANAGER").orElseThrow(() -> new NoSuchElementException("Role 'manager' not found"));
+        UserWithRoles manager  = new UserWithRoles("manager", pwEncoder.encode("secret"), "manager@mail.com", "Manager", "Manager Address");
 
-        testadmin.addRole(roleAdmin);
-        userWithRolesRepository.save(testadmin);
+        manager.addRole(roleManager);
+        userWithRolesRepository.save(manager);
     }
 }

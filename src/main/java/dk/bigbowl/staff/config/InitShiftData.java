@@ -40,7 +40,7 @@ public class InitShiftData implements CommandLineRunner {
         // Filter employees with the EMPLOYEE role
         List<UserWithRoles> employeeList = employees.stream()
                 .filter(employee -> employee.getRoles().stream()
-                        .anyMatch(role -> role.getRoleName().equals("EMPLOYEE")))
+                        .anyMatch(role -> role.getRoleName().equals("SALE")))
                 .collect(Collectors.toList());
 
         // Ensure there are enough employees
