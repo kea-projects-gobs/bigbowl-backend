@@ -13,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @Service
 public class UserWithRolesService {
 
@@ -104,6 +106,10 @@ public class UserWithRolesService {
       }
       userWithRoles.addRole(roleToAssign);
     }
+  }
+
+  public List<String> getAllUsernames(){
+    return userWithRolesRepository.findAll().stream().map(UserWithRoles::getUsername).toList();
   }
 
 }

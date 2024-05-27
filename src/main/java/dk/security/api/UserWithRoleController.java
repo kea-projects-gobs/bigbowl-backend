@@ -4,8 +4,11 @@ import dk.security.dto.UserWithRolesRequest;
 import dk.security.dto.UserWithRolesResponse;
 import dk.security.service.UserWithRolesService;
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -40,5 +43,10 @@ public class UserWithRoleController {
   @Operation(summary = "Removes a role from a UserWithRoles", description = "Caller must be authenticated with the role ADMIN")
   public UserWithRolesResponse removeRole(@PathVariable String username, @PathVariable String role) {
     return userWithRolesService.removeRole(username, role);
+  }
+
+  @GetMapping
+  public ResponseEntity<List<String>> getAllUsernames(){
+    return ResponseEntity.ok().body(userWithRolesService.getAllUsernames());
   }
 }
