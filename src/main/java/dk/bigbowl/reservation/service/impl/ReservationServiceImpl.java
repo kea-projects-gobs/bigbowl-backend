@@ -68,6 +68,21 @@ public class ReservationServiceImpl implements ReservationService {
         return reservationList.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    @Override
+    public void deleteReservation(Long id, Principal principal) {
+        String username = principal.getName();
+        System.out.println("username: " + username);
+        var user = userWithRolesRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+        if (user.getRoles().stream().noneMatch(role -> role.getRoleName().equals("CUSTOMER"))) {
+            throw new RuntimeException("User not allowed");
+        }
+        Reservation reservation = reservationRepository.findById(id).orElseThrow(() -> new RuntimeException("Reservation not found"));
+        if (!reservation.getUser().equals(user)) {
+            throw new RuntimeException("User not allowed");
+        }
+        reservationRepository.delete(reservation);
+    }
+
 
     private ReservationResponse convertToDTO(Reservation reservation) {
         ReservationResponse reservationResponse = new ReservationResponse();
