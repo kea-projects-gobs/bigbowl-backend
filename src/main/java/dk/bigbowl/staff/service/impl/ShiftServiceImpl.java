@@ -28,6 +28,21 @@ public class ShiftServiceImpl implements ShiftService {
                 shiftDTO.getStartTime(),
                 shiftDTO.getEndTime()
         );
+    
+        if (!overlappingShifts.isEmpty()) {
+            throw new RuntimeException("Shift overlaps with existing shift");
+        }
+    }
+    
+    // Overload to also exclude the shift with the given id
+    private void validateShiftOverlap(Long shiftId, ShiftDTO shiftDTO) {
+        List<Shift> overlappingShifts = shiftRepository.findByEmployeeAndDateAndTimeRange(
+                shiftDTO.getEmployee(),
+                shiftDTO.getDate(),
+                shiftDTO.getStartTime(),
+                shiftDTO.getEndTime()
+        ).stream().filter(shift -> !shift.getId().equals(shiftId)).collect(Collectors.toList());
+    
         if (!overlappingShifts.isEmpty()) {
             throw new RuntimeException("Shift overlaps with existing shift");
         }
@@ -50,7 +65,7 @@ public class ShiftServiceImpl implements ShiftService {
 
     @Override
     public ShiftDTO updateShift(Long id, ShiftDTO shiftDTO) {
-        validateShiftOverlap(shiftDTO);
+        validateShiftOverlap(id, shiftDTO);
         Shift existingShift = shiftRepository.findById(id).orElseThrow(() -> new RuntimeException("Shift not found"));
         existingShift.setDate(shiftDTO.getDate());
         existingShift.setStartTime(shiftDTO.getStartTime());
