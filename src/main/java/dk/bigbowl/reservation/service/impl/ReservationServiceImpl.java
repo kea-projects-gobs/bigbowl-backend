@@ -94,11 +94,17 @@ public class ReservationServiceImpl implements ReservationService {
         String username = principal.getName();
         System.out.println("username: " + username);
         var user = userWithRolesRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
-        if (user.getRoles().stream().noneMatch(role -> role.getRoleName().equals("CUSTOMER"))) {
+
+        boolean isEmployee = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("EMPLOYEE"));
+        boolean isAdmin = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("ADMIN"));
+        boolean isCustomer = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("CUSTOMER"));
+
+        Reservation reservation = reservationRepository.findById(id).orElseThrow(() -> new RuntimeException("Reservation not found"));
+        if (isCustomer && !reservation.getUser().equals(user)) {
             throw new RuntimeException("User not allowed");
         }
-        Reservation reservation = reservationRepository.findById(id).orElseThrow(() -> new RuntimeException("Reservation not found"));
-        if (!reservation.getUser().equals(user)) {
+
+        if (!isCustomer && !isEmployee && !isAdmin) {
             throw new RuntimeException("User not allowed");
         }
         reservationRepository.delete(reservation);
