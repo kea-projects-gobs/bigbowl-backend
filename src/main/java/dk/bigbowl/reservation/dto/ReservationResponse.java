@@ -14,5 +14,6 @@ public class ReservationResponse {
     private LocalDate date;
     private String userName;
     private List<ReservationItemResponse> reservationItems;
+    private boolean isConfirmed;
 
 }
