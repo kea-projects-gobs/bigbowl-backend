@@ -12,6 +12,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import dk.bigbowl.staff.entity.Shift;
+
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
@@ -61,6 +63,9 @@ public class UserWithRoles implements UserDetails {
           joinColumns = {@JoinColumn(name = "user_username", referencedColumnName = "username")},
           inverseJoinColumns = {@JoinColumn(name = "role_roleName", referencedColumnName = "roleName")})
   Set<Role> roles = new HashSet<>();
+
+  @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<Shift> shifts;
 
   public UserWithRoles() {}
 
