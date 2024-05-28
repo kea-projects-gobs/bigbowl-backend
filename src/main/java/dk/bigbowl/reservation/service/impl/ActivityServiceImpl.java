@@ -133,10 +133,11 @@ public class ActivityServiceImpl implements ActivityService {
         System.out.println("username: " + username);
         var user = userWithRolesRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
 
-        boolean isEmployee = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("EMPLOYEE"));
-        boolean isAdmin = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("ADMIN"));
+        boolean isManager = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("MANAGER"));
+        boolean isOperator = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("OPERATOR"));
+        boolean isSalesMan = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("SALE"));
 
-        if (!isEmployee && !isAdmin) {
+        if (!isManager && !isSalesMan && !isOperator){
             throw new RuntimeException("User not allowed");
         }
 
