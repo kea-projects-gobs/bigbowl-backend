@@ -66,15 +66,16 @@ public class ReservationServiceImpl implements ReservationService {
         System.out.println("username: " + username);
         var user = userWithRolesRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
 
-        boolean isEmployee = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("EMPLOYEE"));
-        boolean isAdmin = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("ADMIN"));
+        boolean isManager = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("MANAGER"));
+        boolean isOperator = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("OPERATOR"));
+        boolean isSalesMan = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("SALE"));
         boolean isCustomer = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("CUSTOMER"));
 
         List<Reservation> reservationList = new ArrayList<>();
         if (isCustomer) {
             reservationList = reservationRepository.findAllByUser(user);
         }
-        if (isAdmin || isEmployee) {
+        if (isManager || isOperator || isSalesMan) {
             if (fromDate == null || toDate == null) {
                 reservationList = reservationRepository.findAll();
             } else {
@@ -82,7 +83,7 @@ public class ReservationServiceImpl implements ReservationService {
             }
         }
 
-        if (!isCustomer && !isEmployee && !isAdmin) {
+        if (!isCustomer && !isManager && !isOperator && !isSalesMan) {
             throw new RuntimeException("User not allowed");
         }
 
@@ -95,8 +96,10 @@ public class ReservationServiceImpl implements ReservationService {
         System.out.println("username: " + username);
         var user = userWithRolesRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
 
-        boolean isEmployee = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("EMPLOYEE"));
-        boolean isAdmin = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("ADMIN"));
+        boolean isManager = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("MANAGER"));
+        boolean isOperator = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("OPERATOR"));
+        boolean isSalesMan = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("SALE"));
+
         boolean isCustomer = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("CUSTOMER"));
 
         Reservation reservation = reservationRepository.findById(id).orElseThrow(() -> new RuntimeException("Reservation not found"));
@@ -104,7 +107,7 @@ public class ReservationServiceImpl implements ReservationService {
             throw new RuntimeException("User not allowed");
         }
 
-        if (!isCustomer && !isEmployee && !isAdmin) {
+        if (!isCustomer && !isManager && !isOperator && !isSalesMan) {
             throw new RuntimeException("User not allowed");
         }
         reservationRepository.delete(reservation);
@@ -116,10 +119,11 @@ public class ReservationServiceImpl implements ReservationService {
         System.out.println("username: " + username);
         var user = userWithRolesRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
 
-        boolean isEmployee = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("EMPLOYEE"));
-        boolean isAdmin = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("ADMIN"));
+        boolean isManager = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("MANAGER"));
+        boolean isOperator = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("OPERATOR"));
+        boolean isSalesMan = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("SALE"));
 
-        if (!isEmployee && !isAdmin) {
+        if (!isManager && !isOperator && !isSalesMan) {
             throw new RuntimeException("User not allowed");
         }
 
