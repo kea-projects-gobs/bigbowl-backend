@@ -6,6 +6,7 @@ import dk.security.repository.RoleRepository;
 import dk.security.repository.UserWithRolesRepository;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -13,11 +14,11 @@ import org.springframework.stereotype.Component;
 import java.util.NoSuchElementException;
 
 @Component
+@Order(1)
 public class SetupUsers implements ApplicationRunner {
 
     UserWithRolesRepository userWithRolesRepository;
     RoleRepository roleRepository;
-
     PasswordEncoder pwEncoder;
 
     public SetupUsers(UserWithRolesRepository userWithRolesRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
@@ -36,33 +37,47 @@ public class SetupUsers implements ApplicationRunner {
 
     private void setupAllowedRoles() {
         roleRepository.save(new Role("CUSTOMER"));
-        roleRepository.save(new Role("EMPLOYEE"));
-        roleRepository.save(new Role("ADMIN"));
+        roleRepository.save(new Role("SALE"));
+        roleRepository.save(new Role("OPERATOR"));
+        roleRepository.save(new Role("MANAGER"));
     }
 
     private void setUpCustomers() {
         Role roleCustomer = roleRepository.findById("CUSTOMER").orElseThrow(() -> new NoSuchElementException("Role 'customer' not found"));
-        UserWithRoles testcustomer = new UserWithRoles("Johnersej123", pwEncoder.encode("secret"), "john@mail.com", "John Doe", "Pilegårdsvej 22");
+        UserWithRoles testcustomer = new UserWithRoles("John123", pwEncoder.encode("secret"), "john@mail.com", "John Doe", "Random");
 
         testcustomer.addRole(roleCustomer);
         userWithRolesRepository.save(testcustomer);
     }
 
-    private void setUpEmployees(){
-        Role roleEmployee = roleRepository.findById("EMPLOYEE").orElseThrow(() -> new NoSuchElementException("Role 'employee' not found"));
-        UserWithRoles testemployee = new UserWithRoles("peterpedal", pwEncoder.encode("secret"), "peterlind@mail.com", "Peter Lind", "Pilegårdsvej 22");
+    private void setUpEmployees() {
+        Role roleSale = roleRepository.findById("SALE").orElseThrow(() -> new NoSuchElementException("Role 'reservation_sale' not found"));
+        Role roleOperator = roleRepository.findById("OPERATOR").orElseThrow(() -> new NoSuchElementException("Role 'operator' not found"));
 
-        testemployee.addRole(roleEmployee);
-        userWithRolesRepository.save(testemployee);
+
+        // 12 employees to handle reservations and sales
+        for (int i = 1; i <= 12; i++) {
+            String username = "Sale" + i;
+            String email = "Sale" + i + "@mail.com";
+            String name = "Sale " + i;
+            String address = "Sale Address " + i;
+
+            UserWithRoles Sale = new UserWithRoles(username, pwEncoder.encode("secret"), email, name, address);
+            Sale.addRole(roleSale);
+            userWithRolesRepository.save(Sale);
+        }
+
+        // 1 operator
+        UserWithRoles operator = new UserWithRoles("operator", pwEncoder.encode("secret"), "operator@mail.com", "Operator", "Operator Address");
+        operator.addRole(roleOperator);
+        userWithRolesRepository.save(operator);
     }
 
-    private void setupAdmin(){
-        Role roleAdmin = roleRepository.findById("ADMIN").orElseThrow(() -> new NoSuchElementException("Role 'admin' not found"));
-        UserWithRoles testadmin = new UserWithRoles("admin", pwEncoder.encode("secret"), "admin@mail.com", "Admin", "Pilegårdsvej 22");
+    private void setupAdmin() {
+        Role roleManager = roleRepository.findById("MANAGER").orElseThrow(() -> new NoSuchElementException("Role 'manager' not found"));
+        UserWithRoles manager  = new UserWithRoles("manager", pwEncoder.encode("secret"), "manager@mail.com", "Manager", "Manager Address");
 
-        testadmin.addRole(roleAdmin);
-        userWithRolesRepository.save(testadmin);
+        manager.addRole(roleManager);
+        userWithRolesRepository.save(manager);
     }
-
-
 }
