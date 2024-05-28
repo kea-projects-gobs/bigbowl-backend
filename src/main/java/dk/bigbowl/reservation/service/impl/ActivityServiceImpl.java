@@ -1,5 +1,6 @@
 package dk.bigbowl.reservation.service.impl;
 
+import dk.bigbowl.reservation.dto.ActivityDto;
 import dk.bigbowl.reservation.dto.ActivityQuoteReqDto;
 import dk.bigbowl.reservation.dto.ReservationItemQuoteResDto;
 import dk.bigbowl.reservation.dto.ReservationQuoteResDto;
@@ -9,8 +10,10 @@ import dk.bigbowl.reservation.entity.ReservationItem;
 import dk.bigbowl.reservation.repository.ActivityRepository;
 import dk.bigbowl.reservation.repository.ReservationItemRepository;
 import dk.bigbowl.reservation.service.ActivityService;
+import dk.security.repository.UserWithRolesRepository;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -23,12 +26,13 @@ public class ActivityServiceImpl implements ActivityService {
 
     private final ReservationItemRepository reservationItemRepository;
     private final ActivityRepository activityRepository;
+    private final UserWithRolesRepository userWithRolesRepository;
 
-    public ActivityServiceImpl(ReservationItemRepository reservationItemRepository, ActivityRepository activityRepository) {
+    public ActivityServiceImpl(ReservationItemRepository reservationItemRepository, ActivityRepository activityRepository, UserWithRolesRepository userWithRolesRepository) {
         this.reservationItemRepository = reservationItemRepository;
         this.activityRepository = activityRepository;
+        this.userWithRolesRepository = userWithRolesRepository;
     }
-
 
     // Current me is very happy, future me is very sad
     @Override
@@ -116,6 +120,46 @@ public class ActivityServiceImpl implements ActivityService {
         reservationQuoteResDtoTwoHours.setActivityType(activityQuoteReqDto.getActivityType());
 
         return List.of(reservationQuoteResDtoOneHour, reservationQuoteResDtoTwoHours);
+    }
+
+    @Override
+    public List<ActivityDto> getAllActivities() {
+        return activityRepository.findAll().stream().map(this::fromActivityToActivityDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public ActivityDto toggleActivityStatus(Long id, boolean status, Principal principal) {
+        String username = principal.getName();
+        System.out.println("username: " + username);
+        var user = userWithRolesRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+
+        boolean isEmployee = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("EMPLOYEE"));
+        boolean isAdmin = user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("ADMIN"));
+
+        if (!isEmployee && !isAdmin) {
+            throw new RuntimeException("User not allowed");
+        }
+
+        Activity activity = activityRepository.findById(id).orElseThrow(() -> new RuntimeException("Activity not found"));
+        activity.setActive(status);
+        activityRepository.save(activity);
+
+        return fromActivityToActivityDto(activity);
+    }
+
+    private ActivityDto fromActivityToActivityDto(Activity activity) {
+        ActivityDto activityDto = new ActivityDto();
+        activityDto.setId(activity.getId());
+        activityDto.setActivityType(activity.getType().getName());
+        activityDto.setName(activity.getName());
+        activityDto.setLocation(activity.getLocation());
+        activityDto.setDescription(activity.getDescription());
+        activityDto.setActive(activity.isActive());
+        activityDto.setImageUrl(activity.getImageUrl());
+        activityDto.setMaxParticipants(activity.getMaxParticipants());
+        activityDto.setChildFriendly(activity.isChildFriendly());
+        activityDto.setPrice(activity.getType().getPrice());
+        return activityDto;
     }
 
     private ReservationQuoteResDto fromReservationToReservationQuoteResDto(Reservation reservation) {
